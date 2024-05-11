@@ -133,10 +133,10 @@ description={Az Epochok száma adja meg hányszor megy végig a tanulás során 
 \end{enumerate}
 A két félév között viszont megismerkedtem a modellmagyarázási módszerekkel így hozzáadódott az alábbi pont:
 \begin{enumerate}[label=\alph*., start=3]
-    \item A háló döntéseit milyen magyarázó módszer mellett tudnám lehető legérthetőbben vizualizálni és ezáltal megérthetővé tenni.
+    \item A háló döntéseit milyen magyarázó módszer mellett tudnám lehető legérthetőbben megjeleníteni és ezáltal megérthetővé tenni.
 \end{enumerate}
 
-    Előzző féléves Szakmai gyakorolatomban is képfeldolgozó neurális hálókkal foglalkoztam és itt foglalkoztam adatfeldolgozással és MLOps-al is ami az ilyen mesterséges intelligenciával segített módszerek kiszolgálását és fejlesztését könnyíti és találkoztam itt azzal is hogy az ilyen
+    Előző féléves Szakmai gyakorlatomban is képfeldolgozó neurális hálókkal foglalkoztam és itt foglalkoztam adatfeldolgozással és MLOps-al is ami az ilyen mesterséges intelligenciával segített módszerek kiszolgálását és fejlesztését könnyíti és találkoztam itt azzal is hogy az ilyen
     hálók azonban gyakran fekete dobozként (blackbox) működnek, ami komplikálttá teszi azok megértését  hogy biztonságosabbnak tudhassuk ezeket,
     és megértésükkel későbbi hibákat javíthassunk.Az interpretálhatóság, vagyis a modell döntéseinek megértése
     és magyarázata, ezért kulcsfontosságú az ilyen modellek elfogadhatóságában és alkalmazhatóságában.
@@ -144,7 +144,7 @@ A két félév között viszont megismerkedtem a modellmagyarázási módszerekk
     A YOLOv8 (\gls{Yolov8}) egy népszerű és hatékony Konvolúciós neurális háló,
     ennek is a szegmentációs változatát használom (Yolov8m\_seg), ez
     például objektumfelismerésre és objektum-klasszifikációra is tökéletesen használható.
-    A modell architektúrája ismeretében betekinthetünk majd valamilyen küldő eszközzel a layerei közé, és megpróbálhatjuk megérteni a héjjak(layerek) közötti aktivációk alapján.
+    A modell architektúrája ismeretében betekinthetünk majd valamilyen küldő eszközzel a héjjai közé, és megpróbálhatjuk megérteni a héjjak(layerek) közötti aktivációs függvényeinek kimenetei alapján.
 
     Egy ilyen eszköz az \glsentryshort{EigenCAM} (\gls{EigenCAM}) ami egy modellfüggő és gradiensmentes magyarázó rendszer,
     amely képes vizualizálni, hogy a mély tanuló hálózatok mely részei járultak hozzá a döntéshozatalhoz.
@@ -163,7 +163,7 @@ Azonban ezek működése nehezen nevezhető zártnak és kauzálisnak.
 döntéseit érthető és ésszerű módon magyarázza meg.
     Különböző magyarázó módszerek léteznek a mély tanulási modellek interpretálhatóságának növelésére.
 \subsection{Magyarázhatóság}
-A gépi tanulásban használt magyarázó módszerek két fő kategóriára oszthatók: modellfüggő és modellfüggetlen. A modellfüggő magyarázó módszerek közvetlenül figyelembe veszik a modellek belső szerkezetét és működését a magyarázatok létrehozásában. Ezek a módszerek arra törekszenek, hogy feltárják a modell döntéshozatali folyamatainak mechanizmusait és az egyes predikciók alapját. Például a gradiens visszaszármaztatás, osztályaktivációs térképek(\ref{sec:eigencam:-modellfuggo-magyarazo}\label{sechiv} és a LIME modellfüggő magyarázó módszerek.
+A gépi tanulásban használt magyarázó módszerek két fő kategóriára oszthatók: modellfüggő és modellfüggetlen. A modellfüggő magyarázó módszerek közvetlenül figyelembe veszik a modellek belső szerkezetét és működését a magyarázatok létrehozásában. Ezek a módszerek arra törekszenek, hogy feltárják a modell döntéshozatali folyamatainak mechanizmusait és az egyes predikciók alapját. Például a gradiens visszaszármaztatás, osztály-aktivációs térképek(\ref{sec:eigencam:-modellfuggo-magyarazo}\label{sechiv} és a LIME modellfüggő magyarázó módszerek.
 
 Viszont ezzel szemben a modellfüggetlen magyarázó módszerek általánosabb megközelítést alkalmaznak az interpretálhatóságra. Ezek a módszerek nem igénylik a modell belső szerkezetének ismeretét a magyarázat létrehozásához, és általában a bemeneti adatok és a modell predikciói közötti kapcsolatokat vizsgálják. Például a perturbációs alapú módszerek, mint például a SHAP és a LIME.
 
@@ -200,14 +200,12 @@ idejű alkalmazásokhoz, mint például az önvezető járművek vagy a videoele
 
 Ennek a hálónak én a szegmentációs változatát használtam, amely mostanság egy eléggé új
 irány a közlekedési objektumok detektálásában, eddig ugyanis inkább 2--3 dimenziós ún. \("\)bounding boxokat\("\)
-azaz kereteket használtak az objektumok azonosítására, azonban a szegmentációs hálók képesek az objektumok
-pontosabb azonosítására és lokalizálására, a pontosabb adatreprezentáció miatt, azaz az objektumok pontos körvonalainak meghatározására.
-Ezáltal a szegmentációs hálók pontosabb és részletesebb információkat nyújtanak az objektumokról, mint a keretes obejktum-interpretáció.
+azaz kereteket használtak a detektálni kívánt objektumok reprezentációjára, azonban a szegmentációs hálók képesek ezeknek pontosabb azonosítására és lokalizálására, a információ-gazdagabb  adatreprezentáció miatt, azaz az objektumok pontos körvonalainak meghatározására.
+Ezáltal a szegmentációs hálók pontosabb és részletesebb információkat nyújtanak az objektumokról, mint a keretes objektum-interpretáció.
 
 \subsection{Yolov8 architektúra}\label{subsec:yolov8-architektura}
-    A YOLOv8 egy képfeldolgozó (konvolúciós) mély neurális hálózat, tehát rétegeiben konvolúciós rétegeket
-    teljesen összekapcsolt és MaxPooling rétegeket használ, a képek feldolgozásához, és szegmentációjához.
-    A hálózat a bemeneti képet egy sor konvolúciós rétegen keresztül feldolgozza, majd a kimeneti rétegeken keresztül
+    A YOLOv8 egy képfeldolgozó (konvolúciós) mély neurális hálózat, tehát a hálóarchitektúrában konvolúciós rétegeket, teljesen összekapcsolt és "MaxPooling" rétegeket használ, a képek feldolgozásához, és szegmentációjához.
+    A háló bemenetién a képet egy sor konvolúciós és "MaxPooling" rétegen keresztül feldolgozza, majd a kimeneti rétegekben
     meghatározza az objektumok pozícióját és osztályát, mindezt egy iteráció alatt, innen is jön a \("\)\gls{Yolo}\("\).
     A YOLOv8 architektúra~\ref{fig:Yolov8} általában három részre osztható:
     \begin{enumerate}
@@ -222,7 +220,7 @@ Ezáltal a szegmentációs hálók pontosabb és részletesebb információkat n
         \label{fig:Yolov8}
     \end{figure}
     A YOLOv8 architektúra különböző méretű és kapacitású változatokban érhető el, amelyek különböző feladatokhoz
-    és alkalmazásokhoz alkalmazhatók: (Attribútumok CoCo adathalmaz alapján)
+    és alkalmazásokhoz alkalmazhatók: (Attribútumok COCO adathalmaz alapján)
     \begin{table}[ht]
         \begin{tabularx}
         \textwidth{|X|X|X|X|}
@@ -239,17 +237,17 @@ Ezáltal a szegmentációs hálók pontosabb és részletesebb információkat n
             \hline
         \end{tabularx}\label{tab:Netsizes}
     \end{table}
-    Ezenfelül beszélhetűnk szegmentációs hálókról(bővebben: \aref{subsec:szemantikus-szegmentacio} alfejezetben) és
+    Ezenfelül beszélhetünk szegmentációs hálókról(bővebben: \aref{subsec:szemantikus-szegmentacio} alfejezetben) és
     hagyományosan a bounding boxokat detektáló hálókat, amik az objektumok köré illesztenek egy befogó minimális területű téglalapot/téglatestet.(Yolov8\_seg vs. Yolov8)
 
-    Témalaboratórium alatt ilyen bounding box adatreprezentációjú neurális hálót használtam, most viszont, áttertem a szemantikus szegmentációra és az okait a következő alfejezetben felsorolom.
+    Témalaboratórium alatt ilyen bounding box adatreprezentációjú neurális hálót használtam, most viszont, áttértem a szemantikus szegmentációra és az okait a következő alfejezetben felsorolom.
 \newpage
 
 \subsection{Szemantikus szegmentáció}\label{subsec:szemantikus-szegmentacio}
 
 A szemantikus szegmentáció\index{szemantikus szegmentáció} egy olyan adatreprezentációs forma, amelyben a cél az objektumokat tartalmazó kép egyes
 részeinek (például pixeljeinek) címkézése az objektumokhoz tartozó osztályok szerint.
-Van emellett egy másik szegmentáció, az ún. egyed szegmentáció\index[szemantikus szegmentáció]{Egyedszegmentáció}, amelyben minden objektumot külön ,azaz egyedenként, kell detektálni és akár számontartani(indexelni) , míg a szemantikus
+Van emellett egy másik szegmentációs adatreprezentációs forma, az ún. egyed szegmentáció\index[szemantikus szegmentáció]{Egyedszegmentáció}, amelyben minden objektumot külön ,azaz egyedenként, kell detektálni és akár számon tartani(indexelni) , míg a szemantikus
 szegmentációban csak az objektumok osztályait kell meghatározni az egyed megkülönböztetése nélkül.Más szavakkal, minden képpontot
 hozzá kell rendelni egy osztályhoz vagy kategóriához, például autó, biciklis, gyalogos stb.
 Munkámban eddig viszont csak szemantikus szegmentációval foglalkoztam.
@@ -258,7 +256,7 @@ objektumokat egy adott képen.
 
 Tehát a szemantikus szegmentációt leírhatjuk úgy, ha egy képet jelölünk \(I\) -vel, akkor a szemantikus
 szegmentáció pedig egy olyan függvény,\(F: I \rightarrow L\), ahol \(L\) a lehetséges osztályok halmaza, és \(F\) minden
-képpontot hozzárendel egy osztályhoz, ez az osztályhozzárendelés lesz a maszk.
+képpontot hozzárendel egy osztályhoz, ez az osztály-hozzárendelés lesz a maszk.
 A szemantikus szegmentáció kiemelt fontosságú az önvezető autók, a
 ,videoelemzés, a térképek építése és sok más
 alkalmazásban, ahol pontos és részletes objektum-felismerésre van szükség.
@@ -285,8 +283,8 @@ alkalmazásban, ahol pontos és részletes objektum-felismerésre van szükség.
 \end{figure}
 Tehát az adatreprezentációs módszerváltás amiről beszéltem azért fontos:
 \begin{enumerate}
-    \item ,mert pontossága jóval felülmúlja az előzző módszerét.
-    \item .mert az adathalmaz alapvetően ilyen módszerrel van annotálva, kevés előksézítés szükséges
+    \item ,mert pontossága jóval felülmúlja az előző módszerét.
+    \item .mert az adathalmaz alapvetően ilyen módszerrel van annotálva, kevés adat-előkészítési munkálat  szükséges
     \item ,mert könnyebben érthető a feldolgozott kép, nincs olyan hogy az objektumok túlzott sűrűsége miatt túl sok ilyen doboz keletkezik ami megnehezíti vagy akár ellehetetlenítheti a kiolvasást.
 \end{enumerate}
 
@@ -299,7 +297,7 @@ Tehát az adatreprezentációs módszerváltás amiről beszéltem azért fontos
     németországi városokból.
 
     Ez az adathalmaz elég nagy
-    varianciával rendelkezik számunkra ahhoz hogy az adathalmazból egy robosztus szegmentációs hálót tudjunk tanítani közlekedési objektumok detektálására és osztályozására.
+    varianciával rendelkezik számunkra ahhoz hogy az adathalmazból egy robusztus szegmentációs hálót tudjunk tanítani közlekedési objektumok detektálására és osztályozására.
 
 
     \begin{figure}[ht]
@@ -308,7 +306,7 @@ Tehát az adatreprezentációs módszerváltás amiről beszéltem azért fontos
         \caption{CityScapes Examples}
         \label{fig:CityScapes-Examples}
     \end{figure}
-    A tanításhoz és validációhoz a maszkokat poligonok formályában kaptuk meg szöveges (.yaml) formában, ezeket a poligonokat
+    A tanításhoz és validációhoz a maszkokat poligonok formájában kaptuk meg szöveges (.yaml) formában, ezeket a poligonokat
     minimális formai átalakítás után be is tudjuk adni a háló bemenetére a megfelelő képekhez rendelve (szegmentációs
     maszkokról:~\ref{subsec:szemantikus-szegmentacio}). oldalon értekezek.
     A kísérletek:~\ref{tab:Activations} táblán találhatóak
@@ -316,9 +314,9 @@ Tehát az adatreprezentációs módszerváltás amiről beszéltem azért fontos
     A Magyarázat a kísérletekhez a ~\pageref{subsec:magyarazat}\label{pageref}.
     oldalon található.
 
-    Ezeket az adatokat fogjuk a későbbiekben használni arra hogy megpróbáljuk megérteni a hálónkat az aktivációi
+    Ezeket az adatokat fogjuk a későbbiekben használni arra hogy megpróbáljuk megérteni a hálónkat az aktivációs függvényeinek kimenetei
     alapján.
-    Ezeket a teszteket amiket az \glsentryshort{EigenCAM}\index{EigenCAM}-mal végeztem, a németországi Bonn városában vették fel és mivel a tesztszet része így a háló tanításban és a validációban eddig nem szerepelt.
+    Ezeket a teszteket amiket az \glsentryshort{EigenCAM}\index{EigenCAM}-mal végeztem, a németországi Bonn városában vették fel és mivel a teszt-halmaz része így a háló tanításban és a validációban eddig nem szerepelt.
 \subsection{MLOps}\label{subsec:mlops}
 A háló tanításához és validálásához használtam egy online kiértékelő, és eredményösszesítő felületet, ez pedig a Comet.ml\index{Comet} online platform ("alternatívája a Weights \& Biases"-nek), amely egy Github fiókhoz rendelve, segít a \ac{ML} projektek adminisztrációjában.
 A Comet.ml (\url{https://www.comet.ml}) egy kollaboratív \ac{MLOps} platform, amely lehetővé teszi, hogy könnyen és
@@ -328,7 +326,7 @@ A Comet.ml (\url{https://www.comet.ml}) egy kollaboratív \ac{MLOps} platform, a
         \item Rögzíti és követi a kísérletek metrikáit, hiperparamétereit, modellváltozatokat és naplófájljait.
         \item Különböző diagramok és grafikonok segítségével jeleníti meg és elemzi az adatokat és eredményeket.
         \item Lehetőséget ad a különböző kísérletek összehasonlítására és megosztására, akár csapatmunkára is használható.
-        \item  Automatikusan rögzíti és követi a modell változásait és fejlődését a tanítás folyamán aidő múlásával.
+        \item  Automatikusan rögzíti és követi a modell változásait és fejlődését a tanítás folyamán az idő múlásával.
         \item Integrálható más keretrendszerekkel és eszközökkel, és rendelkezik egy API-val is, amely lehetővé teszi a platform
             a saját igényeiknek megfelelő testreszabását.
     \end{itemize}
@@ -344,20 +342,20 @@ A Comet.ml (\url{https://www.comet.ml}) egy kollaboratív \ac{MLOps} platform, a
      Célja, hogy vizualizálja és magyarázza meg a modellek döntéseit a bemeneti adatok alapján,
      osztálydiszkrimináció nélkül, tehát ebben az esetben nem lesznek külön osztályokra szedve az aktivációk, hanem "egybe lesznek gyúrva".
 
-    Az \glsentryshort{EigenCAM} működése során az algoritmus végiglépked a háló kiválaszott héjjain és kiértékeli majd kimenti az aktivációs függvények mátrixát, ezt a mátrixot kiterjeszti (ha kell) annak a kép méretére amire éppen az \gls{Inference}et futtatjuk. (forrás~\cite{muhammad2020eigencam}:)
-    Az ez által genereált "hőtérkép" (Heatmap) már jó esetben lehetővé teszi, hogy az e közelebb kerüljünk ahhoz hogy, hogy megértsük, a kép mely tartományaival mit csinál a háló.
+    Az \glsentryshort{EigenCAM} működése során az algoritmus végiglépked a háló kiválasztott héjain és kiértékeli majd kimenti az aktivációs függvények mátrixát, ezt a mátrixot kiterjeszti (ha kell) annak a kép méretére amire éppen az \gls{Inference}et futtatjuk. (forrás~\cite{muhammad2020eigencam}:)
+    Az ez által generált "hőtérkép" (Heatmap) már jó esetben lehetővé teszi, hogy az e közelebb kerüljünk ahhoz hogy, hogy megértsük, a kép mely tartományaival mit csinál a háló.
 
      Azonban fontos tudni, hogy az \glsentryshort{EigenCAM} csak egy interpretálhatósági eszköz, és nem biztosít teljes képet
      a modell működéséről.
-     Ugyanis ezek az eszközök csak a hálónak egy szeletébe engednek bebocsáltás, amik önmagukban nehezen értelmezhetőek, ha egyáltalán logikus következtetést engednek levonni összesen az aktivációs függvényeinek értékéből.
+     Ugyanis ezek az eszközök csak a hálónak egy szeletébe engednek bebocsátást, amik önmagukban nehezen értelmezhetőek, ha egyáltalán logikus következtetést engednek levonni összesen az aktivációs függvényeinek értékéből.
 
      Az aktivációs csoportok képenként újrarendeződnek így metszeteket is nehéz automatizáltan készíteni. Ez pedig elengedhetetlen annak érdekében hogy biztosra mondjuk egy következtetés magyarázását.
 
 \subsection{Aktivációk}\label{subsec:activations}
-Az akticvációs függvények a modell layereinek kimeneti függvényei ahol \("x\) az input, \("W"\) a súlymátrix és \("b"\) a
-    bias vektor.
-        Az utolsó layerben egy lineáris aktivációs(\ac{ReLU})~\eqref{eq:RELU}\label{alignhivatkozas} függvényt használunk, míg az összes többi layerben egy
-    szivárgó rektifált lineáris aktivációt(\ac{LReLu})~\eqref{eq:LRELU}\label{eqhivatkozas} használunk:
+Az aktivációs függvények a modell héjainka kimeneti függvényei ahol \("x\) az input, \("W"\) a súlymátrix és \("b"\) a
+    "bias" vagyis eltolási vektor.
+        Az utolsó héjban egy lineáris aktivációs(\ac{ReLU})~\eqref{eq:RELU}\label{alignhivatkozas} függvényt használunk, míg az összes többi héjban egy
+    szivárgó rektifikált lineáris aktivációs függvényt(\ac{LReLu})~\eqref{eq:LRELU}\label{eqhivatkozas} használunk:
     \begin{equation}
         \text{ LReLu:}
     \varphi(x) = \begin{cases}
@@ -384,7 +382,7 @@ Az akticvációs függvények a modell layereinek kimeneti függvényei ahol \("
     A CityScapes\index{CityScapes} adathalmazon tanítottuk a Yolov8m-seg hálót (ami egy medium méretű Yolov8 szegmentáló háló)
     , majd az EigenCAM segítségével vizualizáltuk az aktivációkat,
     amelyek a háló a képek feldolgozása közben produkál (ezt az EigenCAM adja a hálónak egy olyan folyamaton keresztül
-    amit \gls{Inference}-nek nevezünk), ezeket az EigenCAM kivezeti és rávetíti a bemenő képre (ezt a folyamatot lásd
+    amit \gls{Inference}nek nevezünk), ezeket az EigenCAM kivezeti és rávetíti a bemenő képre (ezt a folyamatot lásd
     \aref{fig:flowchart} képen és\aref{Inference} pontban \label{listahiv} ), a különböző
     héjak aktivációit külön-külön.
     Amikor végez a kép előállításával azt HEATMAP formájában az output mappájába helyezi.
@@ -419,8 +417,8 @@ Az akticvációs függvények a modell layereinek kimeneti függvényei ahol \("
     \end{itemize}
 \subsection{Implementáció lépései}\label{subsec:impelemntacio}
 \begin{enumerate}
-        \item Github és Comet repozitory létrehozása és felkonfigurálása
-        \item Tanító, validáló és detektáló állományok megírása
+        \item Github és Comet repository létrehozása és felkonfigurálása
+        \item Tanító, validációs és detektáló állományok megírása
         \item Adatfeldolgozás, és adatbázis-management
         \item Tanítás és validáció
         \item Modellanalízis
@@ -430,7 +428,7 @@ Az akticvációs függvények a modell layereinek kimeneti függvényei ahol \("
 \begin{figure}[ht]
     \centering
     \includegraphics[width=1\linewidth]{modelltanitas}
-    \caption{A tanitás folyamata}
+    \caption{A tanítás folyamata}
     \label{fig:tanitas}
 \end{figure}
 
@@ -478,10 +476,10 @@ kékes árnyalatok jelölik.
         \textbf{Layer} & Magyarázat     \\
         \hline
         \textbf{-4}    & Ez a réteg egyetlen konvolúciós réteget tartalmaz.
-        Ami nagyrészt éldetekcióval foglalkozik, így az aktiváció nem kozisztensen jelzi a detektálni kívánt osztályokat,
-        inkább élekre aktiválódik amelyek az osztálydetekcióban hasznosak lehetnek ezeket \gls{feature}-kké fogja
+        Ami nagyrészt éldetekcióval foglalkozik, így az aktiváció nem konzisztensen jelzi a detektálni kívánt osztályokat,
+        inkább élekre aktiválódik amelyek az osztálydetekcióban hasznosak lehetnek ezeket \gls{feature}-ökké fogja
         össze és azokat továbbítja a következő hálónak.
-        Az ennél előrébb lévő rétegek túl kis méretű feature-ökkel foglalkoznak és ezek közül sokkal kevesebb lesz használva,
+        Az ennél előrébb lévő rétegek túl kis méretű \gls{feature}-ökkel foglalkoznak és ezek közül sokkal kevesebb lesz használva,
         viszont a sok aktiváció miatt emberi szemmel keveset érthetünk belőle, túl keveset ahhoz hogy magyarázhatóságba belevegyem,
         hiszem emberi szem által nehezen olvasható és érthető.\\
         \hline
@@ -494,7 +492,7 @@ kékes árnyalatok jelölik.
         amely két Bottleneck blokkot tartalmaz.
         Ezek a blokkok az adatok dimenzióinak csökkentésére és a reprezentációk összeállítására szolgálnak,
         így lehetőséget adva az egyszerűbb és hatékonyabb feldolgozásra az utolsó réteg számára.
-        Az utolsó héj kimenete viszont maguk az osztályaktivációk , ezek egyszer sem produkáltak oylan heatmapet amit
+        Az utolsó héj kimenete viszont maguk az osztályaktivációk , ezek egyszer sem produkáltak olyan heatmapet amit
         érdemes lett volna vizsgálni, a kijövő kép \("\)horizontális vonalkód\("\) szerű, így azt nem vettem bele az
         magyarázható layerekbe\\
         \hline
@@ -504,7 +502,7 @@ kékes árnyalatok jelölik.
 Ezen felül az \glsentryshort{EigenCAM} által nyújtott magyarázatokat összehasonlítottam a két hálóra vonatkozóan.
 \oldh on jól láthatjuk a gyengébb aktivációikat, míg \newh on a magasabb aktivációkat mutat ott ahol ténylegesen fel kell
 ismernie az objektumokat.
-Ezen felül még egyértelműen látható hogy a tanulással arányosan csökken az aktivácók értéke olyan helyeken ahol csak valmiféle
+Ezen felül még egyértelműen látható hogy a tanulással arányosan csökken az aktivácók értéke olyan helyeken ahol csak valamiféle
 tetszőleges él, található mint például a -4. Layer estében.
 Tehát egyértelműen kijelenthetjük hogy a háló tanulását ki tudjuk mutatni összesen csak az aktivációk alapján, az
 \glsentryshort{EigenCAM} segítségével.
@@ -514,10 +512,10 @@ Tehát egyértelműen kijelenthetjük hogy a háló tanulását ki tudjuk mutatn
     , tehát egyéni bemenetekre (a képfelismerés esetében ezek a képek) vonatkozó döntéseihez a kép milyen részei
     milyen fontossággal asszisztáltak.
     Lehet értelmezni a háló architektúrájának tudatában hogy éppen melyik réteg milyen információt dolgoz fel,
-    és ezekből milyen információkat alkot.
+    és ezekből milyen hiedelmeket(értelmezett információkat) alkot.
     Érdekes az is hogy mint ahogy~\pageref{subsec:magyarazat}. oldalon láthattuk a háló tanulását is meg tudjuk
     figyelni az aktivációk alapján és ebből következtetéseket tudunk levonni arra vonatkozóan hogy mik alapján észlelik
-    az objektumokat, kiküszöbölve olyan hibákat, amellyeket a korai mesterséges intelligencia  alapú \ac{CV} szoftverekben előfordulhattak, ami pedig a háttér
+    az objektumokat, kiküszöbölve olyan hibákat, amelyeket a korai mesterséges intelligencia  alapú \ac{CV} szoftverekben előfordulhattak, ami pedig a háttér
     túlzott befolyása az objektum osztályának meghatározásában.
 
 \subsection{Eredmények összegzése}\label{subsec:osszegzes-es-kovetkeztetes}
@@ -539,14 +537,14 @@ Tehát egyértelműen kijelenthetjük hogy a háló tanulását ki tudjuk mutatn
     % Lehetséges fejlesztési irányok az EigenCAM és a YOLOv8 interpretálhatóságának javítására.
     % Új kutatási lehetőségek a mély tanuló modellek magyarázhatóságának területén.
     A \glsentryshort{Yolov8} neurális háló most is vezető szerepet élvez autóipari szolgáltatásokban képfelismerés
-    témakörében, azon belül a szemantikus szegmentációban\index{szemantikus szegmentáció}, ami az elmúlt években előnyt kezdett élvezni a hagyomásnyos
+    témakörében, azon belül a szemantikus szegmentációban\index{szemantikus szegmentáció}, ami az elmúlt években előnyt kezdett élvezni a hagyományos
     két- és háromdimenziós keretekkel szemben, az kereteknél jóval nagyobb pontossága és a maszkok által hordozott
     temérdek információ gazdagsága miatt.
 
     A következőkben tehát a jelenlegi munkámban még a kezdetlegesebb, kiforratlanabb módszert, a modellmagyarázást (vagyis Explainable AI-t
-    \ac{XAI}) szeretném továbbfejleszteni, mivel a jelenlegi megoldásom modellfüggő és aktivációalapú, nem vesz figyelembe gradienseket, és érzékeny a modell belső felépítésére.
-    jövőbeli célom lehetakár bármilyen más módon a modell tanulásának folyamatát figyelni, ezért a jövőben szeretném ezt a módszert továbbfejleszteni
-    és a modell tanulásának folyamatát is figyelembe venni (tehát a gradienseket is belevenni a háló értelmezésébe), hogy a magyarázatok pontosabbak, rendszerszerűbbek és megbízhatóbbak elgyenek.
+    \ac{XAI}) szeretném továbbfejleszteni, mivel a jelenlegi megoldásom modellfüggő és héjaktiváció-alapú, nem vesz figyelembe gradienseket, és érzékeny a modell belső felépítésére.
+    jövőbeli célom lehet akár bármilyen más módon a modell tanulásának folyamatát figyelni, ezért a jövőben szeretném ezt a módszert továbbfejleszteni
+    és a modell tanulásának folyamatát is figyelembe venni (tehát a gradienseket is belevenni a háló értelmezésébe), hogy a magyarázatok pontosabbak, rendszerszerűbbek és megbízhatóbbak legyenek.
     Ennek érdekében a következő megoldásokat helyezem előtérbe:
     \begin{enumerate}
         \item Lime vagy Shap módszerek behozása és összehasonlítása az EigenCAM-mal. \cite{ribeiro-etal-2016-trust,lundberg2017unified}
