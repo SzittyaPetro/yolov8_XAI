@@ -26,21 +26,24 @@
 \usepackage{listings}
 
 \theoremstyle{remark}
-\newtheorem*{remarkth}{Válasz: \newline}
-\newtheorem*{observation}{ \newline \textit}
+\newtheorem{remarkth}{Válasz:}
 \newenvironment{remark}{\begin{remarkth}}{\end{remarkth}}
 \newcommand{\oldh}{\( "old" \)}\label{makro2}
 \newcommand{\newh}{\( "new" \)}
+\newcounter{question}
 
-\newenvironment{kerdes}{
-    \medskip%
-    \par\noindent\ignorespaces%
-    \textit{\textsc{\textbf{Kérdés: }}}%
-    \medskip
-    \textsf%
-}{%
-\medskip
-}
+
+\newenvironment{kerdes}{%
+	\refstepcounter{question}% 
+	\medskip%
+	\par\noindent\ignorespaces%
+	\textit{\textsc{\textbf{\thequestion.  Kérdés :}}}%
+	\medskip
+	\textsf%
+	}{%
+		\medskip
+	}
+
 
 \makeindex
 \makeglossaries
@@ -51,6 +54,7 @@
     short=YOLO,
     description={You Only Look Once, egy gyors és hatékony objektumdetektáló neurális hálózat}
 }
+
 \newglossaryentry{Yolov8}{
 short=YOLOv8,
 name=You Only Look Once version 8,
@@ -75,6 +79,7 @@ description={A YOLOv5 egy hatékony és népszerű objektumdetektáló neurális
 }
 \newglossaryentry{Inference}{
 name=Inference,
+short=inference,
 description={Az inferencia a gépi tanulásban a modell által megtanult minták alkalmazását jelenti új adatokon}
 }
 \newglossaryentry{epoch}{
@@ -125,11 +130,17 @@ description={Az Epochok száma adja meg hányszor megy végig a tanulás során 
 
 
 
+\thispagestyle{empty}
 
+% Vertical centering
+\vspace*{\fill}
 \part{Közlekedési objektumok detektálása Yolov5-ös hálóval}\label{part:kozlekedesi-objektumok-detektalasa-yolov5-os-haloval}
 Konzulensek:
 Dr. Hullám Gábor és
 Révy Gábor
+% Ensure the entire page is used
+\vspace*{\fill}
+
 \section{Bevezetés}\label{sec:bevezetes2}
 
 Az AI alapú képfelismerést a konvolúciós neurális hálók forradalmasították és széles körben alkalmazzák őket a mai
@@ -165,7 +176,7 @@ Az alábbiakban egy konvolúciós háló fontos és rá különösen jellemző �
 A 2D konvolúció a neurális hálókban egy olyan művelet, amelyet az input tenzoron (ebben az esetben egy képen) hajtanak
 végre egy kernel (vagy szűrő) segítségével.
 A kernel egy kis méretű súlyozott mátrix, amelyet végigmozgatnak az input tenzoron,
-és a súlyozott összegeket számolják ki a megfelelő részeknél(lásd \ref{fig:Konvolucio}).
+és a súlyozott összegeket számolják ki a megfelelő részeknél (lásd \ref{fig:Konvolucio}. ábra).
 Ezáltal a konvolúció révén újabb tenzor (feature map vagy jellemzőtérkép) keletkezik, amely tartalmazza az input
 tenzor különböző jellemzőit.
 Számolása az alábbi módon történik:
@@ -193,11 +204,12 @@ Egy konvolúciós réteg olyan egységeket tartalmaz, amelyek mezői az előző 
 Az ilyen egység súlyvektorát (az adaptív paraméterek halmazát) gyakran nevezik szűrőnek.
 
 \subsection{Pooling}\label{subsec:pooling}
-A Pooling  (\aref{fig:Pooling} képen) réteget a bemenet térbeli dimenzióinak (szélességének és magasságának)
+A Pooling  ( \aref{fig:Pooling}. képen látható) réteget a bemenet térbeli dimenzióinak (szélességének és magasságának)
 csökkentésére használják,
-miközben megőrzik a mélységet (azaz a csatornák számát). \newline
+miközben megőrzik a mélységet (azaz a csatornák számát).
+
 Leggyakoribb verziója a Max pooling, ami előre meghatározott területen számol egy a területen belüli maximum értéket az
-elemeken és a következő, kissebb dimenziószámú mátrix értéke lesz
+elemeken és a következő, kisebb dimenziószámú mátrix értéke lesz.
 
 \begin{figure}[h]
 \centering
@@ -209,7 +221,7 @@ elemeken és a következő, kissebb dimenziószámú mátrix értéke lesz
 
 Teljesen kapcsolt réteg (Fully Connected, Dense, Linear Combination): előállítja a bemenetek és egy tárolt
 súlymátrix lineáris kombinációját:
- $H=XW+b$, ahol X a bemeneti mátrix, W a súlymátrix, b egy opcionális eltolósúly-vektor.
+ $H=XW+b$, ahol $X$ a bemeneti mátrix, $W$ a súlymátrix, $b$ egy opcionális eltolósúly-vektor.
 
 \subsection{Batch normalizálás}\label{subsec:batch-normalizalas}
 
@@ -217,9 +229,9 @@ A batch normalizációs rétegek segítik a túltanulás megelőzését és norm
 tanulási sebességének javulása is, ugyanis a Neurális hálók az információt \("\)kötegekben\("\) vagyis batch-ekben dolgozzák fel,
 így ez a réteg egy köteg átlagát és szórását egységesen normalizálja az alábbi módon:
 
-\noindent Átlag: $atlag = 1/m \displaystyle\sum_{i=1}^{m} x_i$  \newline
-Szórás: $szoras = 1/m \displaystyle\sum_{i=1}^{m} (x_i - atlag)^2 $\newline
-Normalizált aktivációk: $yi = (x_i - atlag) \sqrt(szoras + \epsilon)$ \newline
+\noindent Átlag: $\overline{x} = 1/m \displaystyle\sum_{i=1}^{m} x_i$  \newline
+Szórás: $\rho = 1/m \displaystyle\sum_{i=1}^{m} (x_i - \overline{x})^2 $\newline
+Normalizált aktivációk: $yi = (x_i - \overline{x}) \sqrt(\rho + \epsilon)$ \newline
 \newline
 \textit{Átskálázott és eltolt aktivációk}:$ z_i = \gamma y_i + \beta $,
 \textit{ahol} $\gamma$ \textit{és} $\beta$  \textit{tanult paraméterek}
@@ -228,8 +240,8 @@ Normalizált aktivációk: $yi = (x_i - atlag) \sqrt(szoras + \epsilon)$ \newlin
 
 \subsection{YOLOv5 és használt verziók}\label{subsec:yolov5-es-hasznalt-verziok}
 
-A Yolo(You only look once) algoritmus egy Joseph Redmon, Santosh Divvala, Ross Girshick és Ali Farhadi által kitalált
-algoritmuson alapuló neurális háló amiből a félév során a Yolov5-öt (arhitektúra:\ref{fig:architecture}) használtam
+A Yolo (You only look once) \index{Yolo!Yolov5} algoritmus egy Joseph Redmon, Santosh Divvala, Ross Girshick és Ali Farhadi által kitalált
+algoritmuson alapuló neurális háló amiből a félév során a Yolov5-öt (arhitektúra \aref{fig:architecture}. ábrán) használtam
 amit az Ultralytics készített.
 A Yolo egy egészen új megközelítés a computer vision világában.
 Működés közben a képet rácsrendszerre osztja, és minden egyes rács a saját területén lévő objektumokat érzékeli.
@@ -248,9 +260,12 @@ középpont, szélesség, és hosszúság, szerint.
 \vspace{1mm}
 \noindent \href{https://github.com/ultralytics/yolov5}{https://github.com/ultralytics/yolov5}
 \vspace{2mm}
-\noindent A Yolov5~\cite{yolov5github} hálónak öt ismert verziója van, amik méretükben és így effektivitásukban térnek
+\noindent A Yolov5~\cite{yolov5github} hálónak öt ismert verziója van.
+
+Ezek a különböző verziók méretükben és így effektivitásukban és sebességükben térnek
 el egymástól:
 \vspace{2mm}
+\newpage
 \begin{enumerate}
 \item Yolov5n (nano) ~1,9 millió paraméter,
 \item Yolov5s (small) ~7,2 millió paraméter.
@@ -266,8 +281,7 @@ közlekedési objektumokra, 80 objektuma között állatok és hétköznapi tár
 kompetenciával a közlekedéi objektumok detektálására.
 
 \subsection{Adathalmaz, Cityscapes}\label{subsec:adathalmaz-cityscapes}
-Ezt a hálót tanítottam felül hogy az általam kitűzött cél elérésére, a közlekedési objektumok detektálására,
- erre használtam fel a \("\)Cityscapes dataset\("\)\cite{cityscapes}-et.
+Ezt a hálót tanítottam felül hogy az általam kitűzött cél elérésére, a közlekedési objektumok detektálására. A tanításához használtam fel a \("\)Cityscapes dataset\("\)\cite{cityscapes}-et\index{CityScapes}.
  Hogy a hálónk effektívebb legyen csak 8 osztályt hagytam meg abból inkább 6 osztály észlelésére tanítottam
  felül,8 osztály az eredeti adathalmazból \textit{(gyalogos, autó, bicilkis, motoros, busz, vonat, kamion, ismeretlen)}
 de a Cityscapes-ben csak ebből 6 található\textit{(gyalogos, autó biciklis, motoros, busz, kamion)}, erre felültanítottam,
@@ -278,11 +292,12 @@ motoros, kamion, busz).A finom annotáció ebben a helyzetben azt jelenti hogy a
 Az adatbázis annotált és nyers képeket tartalmaz
  közúti/városi helyzetekről, több évszakban(tavasz, nyár, ősz), változó fényviszonyok között és különböző
 időjárási viszonyok között lett felvéve egy fedélzeti kamera (dashcam) szemszögéből.
- Az szegmentációs maszkokat minden képhez egy json fájl tárolja, ezekben az objektumok poligonokként,
-azok pontjaival vannak leírva (és a pontok x és y pozíciójukkal megadva, ezek esetén a mértékegységet a kép adott
-tengelyen való kiterjedésében adták meg), és egy el vannak látva egy id-vel ami az objektum osztályát hordozza információként.
+ A szegmentációs maszkokat minden képhez egy ".json" kiterjesztésű fájl tárolja, ezekben az objektumok poligonokként.
+Ezek a poligonok véges számú pontjaival vannak leírva (és a pontok x és y pozíciójukkal megadva, ezek esetén a mértékegységet a kép adott
+tengelyen való kiterjedésében adták meg)
+Ezek az objektumok el vannak látva egy id-vel ami az objektum osztályát hordozza információként.
 
-
+\newpage
 \subsection{Formátumkonverzió}\label{subsec:formatumkonverzio}
 Az előbbi bekezdésekből megérthettük hogy az adathalmaz és a háló bemenete nem ugyanazon a formátumon van (poligon $\neq$ bounding box),
 ezért írni kellett egy átalakítót ami ezt az átalakítást, gyorsan és megbízhatóan elvégzi, erre egy egyszerű algoritmust írtam.
@@ -290,24 +305,29 @@ ezért írni kellett egy átalakítót ami ezt az átalakítást, gyorsan és me
 \begin{verbatim}
 for v in "poligon pontjai":
 
-    maxx=max(v.x,maxx)      //négyzet legjobboldalibb pontja
+    maxx=max(v.x,maxx)     
+     //négyzet legjobboldalibb pontja
 
-    minx=min(v.x,minx)      //négyzet legbaloldalibb pontja
+    minx=min(v.x,minx)      
+    //négyzet legbaloldalibb pontja
 
-    maxy=max(v.y,maxy)      //négyzet legfelso pontja
+    maxy=max(v.y,maxy)     //négyzet legfelso pontja
 
-    miny=min(v.y,miny)      //négyzet legalsó pontja
+    miny=min(v.y,miny)     //négyzet legalsó pontja
 \end{verbatim}
-Ezekből a pontokból csinálunk egy tégalalpot az alábbi módonhatározzuk meg:
+Ezekből a pontokból csinálunk egy téglalapot az alábbi módon határozzuk meg:
 
 \begin{verbatim}
 for v in "poligon pontjai":
 
-    width=maxx-minx     //szélesség két szélso x koordináta különbsége
+    width=maxx-minx     
+    //szélesség két szélso x koordináta különbsége
 
-    height=maxy-miny    //magasság a két szélso y koordináta különbsége
+    height=maxy-miny    á
+    //magasság a két szélso y koordináta különbsége
 
     centerx=(maxx+minx)/2   //a középpont a két szélso
+    
     centery=(maxy+miny)/2   //koordinátapáros átlaga
 
 \end{verbatim}
@@ -317,8 +337,8 @@ A Yolov5s modellt felültanítottam a már hálónak megfelelő formátumra, ír
 kiterjesztésű fájlt az adathalmaz helyéről és megkezdtem a tanítást.
 
 \begin{lstlisting}[language=bash,label={lst:lstlisting}]
-$ python train.py --img 1024 --epochs 10 --data Traffic.yaml
-        --weights yolov5s.pt --batch-size 4
+$ python train.py --img 1024 --epochs 10 --data 
+Traffic.yaml --weights yolov5s.pt --batch-size 4
 \end{lstlisting}
 Tehát a tanítást a yolov5s.pt-n végeztem 1024 pixeleses felbontáson, 10 epochon keresztül végeztem, és egyszerre
 a háló 4 képet kapott, ezt írja le a fenti parancs.
@@ -344,26 +364,30 @@ vannak, z YOLO háló érzékenyebbé válik rájuk.
 A megoldás lehet a tanító adathalmaz újraegyensúlyozása.
 
 Az egyensúlyhiány kiküszöböléséhez több módszer is alkalmazható:
-\begin{enumerate}
+\begin{enumerate}\label{célok}
     \item \textbf{Adatmódosítás}: Több képet kell beszerezni olyan osztályokról, amelyek alulreprezentáltak (például buszok),
 hogy a háló ne favorizálja a felülreprezentált osztályokat.
     \item \textbf{ Szemantikus szegmentácó}: Finomhangolhatjuk a YOLO hálót szemantikus szegmentációra, ami egy sokkal pontsoabb,
     adatreprezentációs forma.
     \item  \textbf{Nagyobb hálózat}: Nagyobb YOLO verziókra tanítás (pl. YOLOv5m, YOLOv5l, YOLOv5x),
 melyek több paraméterrel rendelkeznek és lehet, hogy jobb eredményeket érünk el használatukkal.
-    \item  \textbf{új erőforrás beszerzése} új(hardveres) erőforrás és jobb szoftveres kiszolgálás beszerzése és felépítése
+    \item  \textbf{Új erőforrás beszerzése} Új(hardveres) erőforrás és jobb szoftveres kiszolgálás beszerzése és felépítése
 \end{enumerate}
 
 \newpage
+\thispagestyle{empty}
 
+% Vertical centering
+\vspace*{\fill}
 \part{Yolov8-as szegmentációs háló és annak magyarázhatósága EigenCAM típusú modellfüggő magyarázó rendszerrel}\label{part:yolov8-as-szegmentacios-halo-es-annak-magyarazhatosaga-eigencam-tipusu-modellfuggo-magyarazo-rendszerrel}
+\vspace*{\fill}
 \setcounter{section}{0}
 \newsection{Bevezetés}\label{sec:bevezetes}
 \pagestyle{fancy}
     Közlekedési objektumok detektálásával foglalkoztam a tavalyi témalaboratóriumomban (\ref{part:kozlekedesi-objektumok-detektalasa-yolov5-os-haloval}),
      gépi látás (\ac{CV}) témakörében, mindezt Yolo architektúrájú neurális hálóval.
     Akkor a \glsentryshort{Yolov5}-tel foglalkoztam hagyományos keretes adatreprezentáció mellett és a dolgozatom végén
-     haladási tervet fogalmaztam meg azért, hogy jobban elmerüljek ebben a területben.
+     haladási tervet fogalmaztam meg azért, hogy jobban elmerüljek ebben a területben (lásd a \pageref{célok}. oldal listájában).
 Ezek akkor az alábbiak voltak:
 \begin{enumerate}[label=\alph*., start=1]\label{enum:tervek}
     \item újabb hálóarchitektúra vagy nagyobb háló alkalmazása
@@ -376,7 +400,7 @@ A két félév között viszont megismerkedtem a modellmagyarázási módszerekk
 \end{enumerate}
 
     Előző féléves szakmai gyakorlatomban, képfeldolgozó neurális hálókkal dolgoztam.
-    Itt feladatom volt megismerkedni az adatfeldolgozással, MLOps-al is ami, a mesterséges intelligenciával segített
+    Itt feladatom volt megismerkedni az adatfeldolgozással, \ac{MLOps}-al is ami, a mesterséges intelligenciával segített
     szoftverek kiszolgálását és fejlesztését könnyíti.
     Ekkor szembesültem azzal, hogy a neurális hálók azonban gyakran fekete dobozként (blackbox) működnek,
     ami komplikálttá teszi azok megértését.
@@ -385,7 +409,7 @@ A két félév között viszont megismerkedtem a modellmagyarázási módszerekk
     Az interpretálhatóság nem más mint a modell döntéseinek megértése
     és magyarázata, ami kulcsfontosságú ezen modellek elfogadhatóságában és alkalmazhatóságában.
 
-    A YOLOv8 (\gls{Yolov8}) egy népszerű és hatékony konvolúciós neurális háló.
+    A YOLOv8 (\gls{Yolov8}) \index{Yolo!Yolov8}egy népszerű és hatékony konvolúciós neurális háló.
     Ennek a szegmentációs változatát használom (Yolov8m\_seg), ez
     például objektumfelismerésre és objektum-klasszifikációra is tökéletesen használható.
     A modell architektúrája ismeretében betekinthetünk majd valamilyen külső eszközzel a héjjai közé,
@@ -414,7 +438,7 @@ egyes predikciók alapját.
 Például a gradiens visszaszármaztatás, osztály-aktivációs térképek(\ref{sec:eigencam:-modellfuggo-magyarazo}.fejezetben bővebben)\label{sechiv}
 és a LIME modellfüggő magyarázó módszerek.
 
-Azomban a modellfüggetlen magyarázó módszerek általánosabb megközelítést alkalmaznak az interpretálhatóságra.
+Azonban a modellfüggetlen magyarázó módszerek általánosabb megközelítést alkalmaznak az interpretálhatóságra.
 Ezek a módszerek nem igénylik a modell belső szerkezetének ismeretét a magyarázat létrehozásához, és általában
 a bemeneti adatok és a modell predikciói közötti kapcsolatokat vizsgálják.
 Például a perturbációs alapú módszerek, mint például a SHAP és a LIME együttes használata.
@@ -432,15 +456,17 @@ Például a perturbációs alapú módszerek, mint például a SHAP és a LIME e
 \end{remark}
 \newsection{YOLOv8: Szemantikus szegmentációs háló és működése}\label{sec:yolov8:-szemantikus-szegmentacios-halo}
     \begin{wrapfigure}{l}{0.2\textwidth}
-        \centering
-        \includegraphics[width=0.2\textwidth]{Ultralytics}
-        \caption{Ultralytics logo}
-        \label{fig:Ultralytics}
+    	\centering
+    	\vspace{-10pt} % Optional: Adjust this value to fine-tune vertical spacing
+    	\includegraphics[width=0.15\textwidth]{Ultralytics}
+    	\vspace{-10pt} % Optional: Adjust this value to fine-tune vertical spacing
+    	\caption{Ultralytics logo}
+    	\label{fig:Ultralytics}
     \end{wrapfigure}
-    A YOLOv8 (\cite{Yolov8})\label{irodalomhivatkozas} egy hatékony és népszerű osztályozó és detektáló neurális
+    A YOLOv8 (\cite{Yolov8}. hivatkozás alatti repository)\label{irodalomhivatkozas} egy hatékony, népszerű osztályozó és detektáló neurális
     hálózatcsalád legújabb példánya, amelyet számos számítógépes látás (\ac{CV})
     feladatban használnak.
-    A \(""\)\gls{Yolo}\(""\) (\glsentryshort{Yolo}) megközelítést alkalmazza,
+    A \("\)\gls{Yolo}\("\) (\glsentryshort{Yolo}) megközelítést alkalmazza,
     amely gyors és pontos objektumdetektálást tesz lehetővé egyetlen neurális háló segítségével.
 
 
@@ -470,16 +496,16 @@ Például a perturbációs alapú módszerek, mint például a SHAP és a LIME e
     A háló bemenetién a képet  konvolúciós és \("\)MaxPooling\("\) rétegeken keresztül feldolgozza,
     majd a kimeneti rétegekben meghatározza az objektumok pozícióját és osztályát, mindezt egy iteráció alatt,
     innen is jön a \("\)\gls{Yolo}\("\) elnevezés.
+    \newpage
     A YOLOv8 architektúra~\ref{fig:Yolov8} általában három részre osztható:
     \begin{enumerate}
         \item Az előfeldolgozó rétegek, amelyek a bemeneti képet előkészítik a további feldolgozásra.
         \item A konvolúciós rétegek, amelyek a képet feldolgozzák és az objektumokat azonosítják.
         \item A kimeneti rétegek, amelyek meghatározzák az objektumok pozícióját és osztályát.
     \end{enumerate}
-    \newpage
     \begin{figure}[ht]
         \centering
-        \noindent\includegraphics[width=1\linewidth]{maxresdefault}
+        \noindent\includegraphics[width=0.85\linewidth]{maxresdefault}
         \label{fig:Yolov8}
     \end{figure}
     A YOLOv8 architektúra eltérő méretű és kapacitású változatokban érhető el, amelyek különböző feladatokhoz
@@ -507,13 +533,13 @@ Például a perturbációs alapú módszerek, mint például a SHAP és a LIME e
     Témalaboratórium alatt bounding box adatreprezentációjú neurális hálót használtam,
     most viszont, áttértem a szemantikus szegmentációra.
     Ennek okait a következő alfejezetben felsorolom.
-\newpage
+
 
 \subsection{Szemantikus szegmentáció}\label{subsec:szemantikus-szegmentacio}
 
-A szemantikus szegmentáció\index{szemantikus szegmentáció} egy olyan adatreprezentációs forma, amelyben a cél az
+A szemantikus szegmentáció\index{szegmentáció!szemantikus szegmentáció} egy olyan adatreprezentációs forma, amelyben a cél az
 objektumokat tartalmazó kép egyes részeinek (például pixeljeinek) címkézése az objektumokhoz tartozó osztályok szerint.
-Van emellett egy másik szegmentációs adatreprezentációs forma, az ún. egyed szegmentáció\index[szemantikus szegmentáció]
+Van emellett egy másik szegmentációs adatreprezentációs forma, az ún. egyed szegmentáció\index{szegmentáció!egyedszegmentáció}
 {Egyedszegmentáció}, amelyben minden objektumot külön, azaz egyedenként kell detektálni és akár számon tartani (indexelni),
 míg a szemantikus szegmentációban csak az objektumok osztályait kell meghatározni az egyed megkülönböztetése nélkül.
 Más szavakkal, minden képpontot hozzá kell rendelni egy osztályhoz vagy kategóriához, például autó, biciklis, gyalogos stb.
@@ -550,10 +576,10 @@ alkalmazásban, ahol pontos és részletes objektum-felismerésre van szükség.
 \end{figure}
 Tehát az adatreprezentációs módszerváltást azért tartottam fontosnak:
 \begin{enumerate}
-    \item ,mert pontossága jóval felülmúlja az előző módszerét.
-    \item ,mert az adathalmaz alapvetően szemantikus szegmentálási módszerrel van annotálva,
+    \item mert pontossága jóval felülmúlja az előző módszerét.
+    \item mert az adathalmaz alapvetően szemantikus szegmentálási módszerrel van annotálva,
             kevés adat-előkészítési munkálat  szükséges.
-    \item ,mert könnyebben érthető a feldolgozott kép, nincs olyan hogy az objektumok túlzott sűrűsége miatt túl sok
+    \item mert könnyebben érthető a feldolgozott kép, nincs olyan hogy az objektumok túlzott sűrűsége miatt túl sok
            doboz keletkezik ami megnehezíti vagy akár ellehetetlenítheti a kiolvasást.
 \end{enumerate}
 
@@ -579,7 +605,7 @@ Tehát az adatreprezentációs módszerváltást azért tartottam fontosnak:
     A tanításhoz és validációhoz a maszkokat poligonok formájában kaptam meg szöveges (.yaml) formában, ezeket a poligonokat
     minimális átalakítás után be is tudtam adni a háló bemenetére a megfelelő képekhez rendelve (szegmentációs
     maszkokról:~\ref{subsec:szemantikus-szegmentacio}. oldalon értekezek.)
-    A kísérletek:~\ref{tab:Activations} táblázatban találhatóak.
+    A kísérletek \aref{tab:Activations}. táblázatban találhatóak.
 
     A magyarázat a kísérletekhez a ~\pageref{subsec:magyarazat}\label{pageref}.
     oldalon található.
@@ -591,7 +617,7 @@ Tehát az adatreprezentációs módszerváltást azért tartottam fontosnak:
 \subsection{MLOps}\label{subsec:mlops}
 A háló tanításához és validálásához használtam egy online kiértékelő, és eredményösszesítő felületet, ez pedig a Comet.ml\index{Comet} online platform ("alternatívája a Weights \& Biases"-nek), amely egy Github fiókhoz rendelve, segít a \ac{ML} projektek adminisztrációjában.
 A Comet.ml (\url{https://www.comet.ml}) egy kollaboratív \ac{MLOps} platform, amely lehetővé teszi, hogy könnyen és
-    hatékonyan figyelhessük a futó tanításainkat, validációinkat és \gls{Inference}inket.
+    hatékonyan figyelhessük a futó tanításainkat, validációinkat és \glsentryshort{Inference}inket.
     Számos funkciót kínál:
     \begin{itemize}
         \item Rögzíti és követi a kísérletek metrikáit, hiperparamétereit, modellváltozatokat és naplófájljait.
@@ -601,11 +627,9 @@ A Comet.ml (\url{https://www.comet.ml}) egy kollaboratív \ac{MLOps} platform, a
         \item Integrálható más keretrendszerekkel és eszközökkel, és rendelkezik egy API-val is, amely lehetővé teszi a platform
             saját igényeiknek megfelelő testreszabását.
     \end{itemize}
-    \begin{observation}
-        Összességében a Comet.ml egy teljes körű platform, amely segíti a \ac{ML} hatékony kezelését
+        Összességében a Comet.ml egy teljes körű platform, amely segíti a \ac{ML} folyamatok hatékony kezelését
         és nyomon követését, valamint lehetővé teszi a felhasználók számára, hogy gyorsabban és hatékonyabban dolgozzanak
         valamint jobban manageljék kísérleteiket.
-    \end{observation}
 
 \newsection{EigenCAM: Modellfüggőn magyarázó}\label{sec:eigencam:-modellfuggo-magyarazo}
      Az \glsentryshort{EigenCAM}\index{EigenCAM} (Eigen Class Activation Mapping) egy modellfüggő magyarázó módszer (forrás~\cite{pytorch-grad-cam}:), amelyet a mély tanulási
@@ -616,7 +640,7 @@ A Comet.ml (\url{https://www.comet.ml}) egy kollaboratív \ac{MLOps} platform, a
 
     Az \glsentryshort{EigenCAM} működése során az algoritmus végiglépked a háló kiválasztott héjain és kiértékeli
      az aktivációs függvények mátrixát.
-    Ezt a mátrixot kiterjeszti (ha kell) annak a képnek méretére amire éppen az \gls{Inference}et futtatjuk.
+    Ezt a mátrixot kiterjeszti (ha kell) annak a képnek méretére amire éppen az \glsentryshort{Inference}et futtatjuk.
     (forrás~\cite{muhammad2020eigencam}:)
     Az ez által generált \("\)hőtérkép\("\) (Heatmap) már jó esetben lehetővé teszi azt, hogy közelebb kerüljünk
      annak megértéséhez, hogy a kép mely tartományai játszanak nagyobb szerepet a detekcióban és klasszifikációban.
@@ -632,9 +656,9 @@ A Comet.ml (\url{https://www.comet.ml}) egy kollaboratív \ac{MLOps} platform, a
 \subsection{Aktivációk}\label{subsec:activations}
 Az aktivációs függvények a modell héjainka kimeneti függvényei ahol \("x\) az input, \("W"\) a súlymátrix és \("b"\) a
     \("\)bias\("\) vagyis eltolási vektor.
-        Az utolsó héjban egy lineáris aktivációs(\ac{ReLU})~\eqref{eq:RELU}\label{alignhivatkozas} függvényt használunk,
+        Az utolsó héjban egy lineáris aktivációs(\ac{ReLU})~\eqref{eq:RELU}.  \label{alignhivatkozas} függvényt használunk,
     míg az összes többi héjban egy
-    szivárgó rektifikált lineáris aktivációs függvényt(\ac{LReLu})~\eqref{eq:LRELU}\label{eqhivatkozas} használunk:
+    szivárgó rektifikált lineáris aktivációs függvényt(\ac{LReLu})~\eqref{eq:LRELU} \label{eqhivatkozas} használunk:
     \begin{equation}
         \text{ LReLu:}
     \varphi(x) = \begin{cases}
@@ -644,25 +668,29 @@ Az aktivációs függvények a modell héjainka kimeneti függvényei ahol \("x\
     \end{equation}\label{eq:activation_functions}
 
 
+    
     \begin{align}
-    \text{ReLU:}
-    \varphi(x)=\begin{cases}
-      x, & \text{ha } x > 0 \\
-      0, & \text{különben} \end{cases}\label{eq:RELU} \\
-    \text{Sigmoid:}
-    \varPhi(x) &= \frac{1}{1 + e^{-x}} \label{eq:Sigmoid}
+    	\text{ReLU:} \quad
+    	\varphi(x) &= 
+    	\begin{cases}
+    		x, & \text{ha } x > 0 \\
+    		0, & \text{különben}
+    	\end{cases} \label{eq:RELU} \\
+    	\text{Sigmoid:} \quad
+    	\varPhi(x) &= \frac{1}{1 + e^{-x}} \label{eq:Sigmoid}
     \end{align}
+
 
 \newsection{Az EigenCAM alkalmazása a YOLOv8-ra}\label{sec:az-eigencam-alkalmazasa-a-yolov8-ra}
     Az \glsentryshort{EigenCAM}\index{EigenCAM} alkalmazása a YOLOv8 szemantikus szegmentációs hálóra lehetővé teszi számunkra,
      hogy megértsük miképpen azonosít és lokalizál objektuomokat képeken és videókon a modell.
-    (\cite{YoloV8-CAM} alapján).
+    (\cite{YoloV8-CAM}. hivatkozás repository-ja alapján).
 
     Az \glsentryshort{EigenCAM} konkrét működési folyamata \aref{fig:flowchart}\label{abrahiv} ábrán látható.
     A CityScapes\index{CityScapes} adathalmazon tanítottuk a Yolov8m-seg hálót (ami egy közepes méretű Yolov8 szegmentáló háló)
     , majd az EigenCAM segítségével vizualizáltuk az aktivációkat,
     amelyeket a háló a képek feldolgozása közben produkál (ezt az EigenCAM adja a hálónak egy olyan folyamaton keresztül
-    amit \gls{Inference}nek nevezünk).
+    amit \glsentryshort{Inference}nek nevezünk).
     Ezeket az EigenCAM kivezeti és rávetíti a bemenő képre (ezt a folyamatot lásd
     \aref{fig:flowchart} képen és\aref{Inference} pontban \label{listahiv} ), a különböző
     héjak aktivációit külön-külön.
@@ -690,11 +718,10 @@ Az aktivációs függvények a modell héjainka kimeneti függvényei ahol \("x\
     }
 
     \end{center}
-\subsection{\Aref{fig:flowchart}.ábra jelmagyarázata}\label{subsec:aref{fig:flowchart}-jelmagyarazata}
 \begin{itemize}\label{itemize}
         \item Normál Szaggatott: Tanítási időben.
-        \item Teli nyíl: Inference (EigenCAM használata) közben.\label{Inference}
-        \item Laza szaggatott nyíl: Inference idő után.
+        \item Teli nyíl: \glsentryshort{Inference} (EigenCAM használata) közben.\label{Inference}
+        \item Laza szaggatott nyíl: \glsentryshort{Inference} idő után.
     \end{itemize}
 \subsection{Implementáció lépései}\label{subsec:impelemntacio}
 \begin{enumerate}
@@ -718,7 +745,7 @@ Az aktivációs függvények a modell héjainka kimeneti függvényei ahol \("x\
     \gls{epoch} keresztól tanult a ugyanazon teljes adathalmazon, a másik pedig 40 \gls{epoch} keresztül tanítottam.
 
 
-    Az \glsentryshort{EigenCAM}\index{EigenCAM} által nyújtott kimenet amit ábrázoltam \aref{tab:Activations}
+    Az \glsentryshort{EigenCAM}\index{EigenCAM} által nyújtott kimenet amit ábrázoltam \aref{tab:Activations}.
     táblázatban\label{hivatkozas}.
     A két háló detekciója alig különbözik.
     Kizárólag abban különböznek, hogy milyen bizonyosságban képesek megmondani átlagosan az objektumok osztályát.
@@ -816,15 +843,14 @@ Tehát egyértelműen kijelenthetjük hogy a háló tanulását ki tudom mutatni
     osztályokra tanított, ugyanolyan architektúrájú hálótól.
 
     Ezen felül foglalkoztam az új architektúrával, Yolov5-ről Yolov8-ra tértem át, és először használtam felhő alapú
-    MLOps megoldásokat munkám segítésére, mint például a Comet (\url{https://www.comet.ml}) amelyben \aref{subsec:MLOps} fejezetben
-    részleteztem.
+    \ac{MLOps} megoldásokat munkám segítésére, mint például a Comet (\url{https://www.comet.ml}) amelyben az ott végzett munkámat és szerzett tapasztalataimat \aref{subsec:mlops}. fejezetben részleteztem.
 
 \newsection{Jövőbeli irányok és kutatási lehetőségek}\label{sec:jovobeli-iranyok-es-kutatasi-lehetosegek}
     % Lehetséges fejlesztési irányok az EigenCAM és a YOLOv8 interpretálhatóságának javítására.
     % Új kutatási lehetőségek a mély tanuló modellek magyarázhatóságának területén.
     A \glsentryshort{Yolov8} neurális háló most is vezető szerepet élvez az autóipari szolgáltatásokban képfelismerés
     témakörében.
-    Azon belül a szemantikus szegmentációban\index{szemantikus szegmentáció}, ami az elmúlt években előnyt élvez
+    Azon belül a szemantikus szegmentációban\index{szegmentáció!szemantikus szegmentáció}, ami az elmúlt években előnyt élvez
     a hagyományos  két- és háromdimenziós keretekkel szemben, a kereteknél jóval nagyobb pontossága
     és a maszkok által hordozott temérdek információ gazdagsága miatt.
 

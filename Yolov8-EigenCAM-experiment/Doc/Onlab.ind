@@ -1,0 +1,22 @@
+\begin{theindex}
+
+  \item CityScapes, \hyperpage{8}, \hyperpage{18}, \hyperpage{21}
+  \item Comet, \hyperpage{18}
+
+  \indexspace
+
+  \item EigenCAM, \hyperpage{18}, \hyperpage{20, 21}, \hyperpage{23}
+
+  \indexspace
+
+  \item szegmentáció
+    \subitem egyedszegmentáció, \hyperpage{17}
+    \subitem szemantikus szegmentáció, \hyperpage{17}, \hyperpage{26}
+
+  \indexspace
+
+  \item Yolo
+    \subitem Yolov5, \hyperpage{7}
+    \subitem Yolov8, \hyperpage{13}
+
+\end{theindex}

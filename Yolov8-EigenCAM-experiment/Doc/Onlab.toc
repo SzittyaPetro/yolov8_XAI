@@ -1,0 +1,34 @@
+\select@language {hungarian} \contentsline {part}{I.\hspace {1em}Közlekedési objektumok detektálása Yolov5-ös hálóval}{4}{part.1}%
+\select@language {hungarian} \contentsline {section}{\numberline {1}Bevezetés}{4}{section.1}%
+\select@language {hungarian} \contentsline {subsection}{\numberline {1.1}Felvetett problémakör}{4}{subsection.1.1}%
+\select@language {hungarian} \contentsline {section}{\numberline {2}Konvolúciós Neurális hálók}{5}{section.2}%
+\select@language {hungarian} \contentsline {subsection}{\numberline {2.1}2D diszkrét Konvolúció}{5}{subsection.2.1}%
+\select@language {hungarian} \contentsline {subsection}{\numberline {2.2}Pooling}{6}{subsection.2.2}%
+\select@language {hungarian} \contentsline {subsection}{\numberline {2.3}Teljesen összekapcsolt réteg}{6}{subsection.2.3}%
+\select@language {hungarian} \contentsline {subsection}{\numberline {2.4}Batch normalizálás}{6}{subsection.2.4}%
+\select@language {hungarian} \contentsline {section}{\numberline {3}Yolov5 és gyakorlati alkalmazása}{7}{section.3}%
+\select@language {hungarian} \contentsline {subsection}{\numberline {3.1}YOLOv5 és használt verziók}{7}{subsection.3.1}%
+\select@language {hungarian} \contentsline {subsection}{\numberline {3.2}Adathalmaz, Cityscapes}{8}{subsection.3.2}%
+\select@language {hungarian} \contentsline {subsection}{\numberline {3.3}Formátumkonverzió}{9}{subsection.3.3}%
+\select@language {hungarian} \contentsline {subsection}{\numberline {3.4}Tanítás és validáció, adatok kiértékelése}{10}{subsection.3.4}%
+\select@language {hungarian} \contentsline {subsection}{\numberline {3.5}Megoldás}{11}{subsection.3.5}%
+\select@language {hungarian} \contentsline {part}{II.\hspace {1em}Yolov8-as szegmentációs háló és annak magyarázhatósága EigenCAM típusú modellfüggő magyarázó rendszerrel}{12}{part.2}%
+\select@language {hungarian} \contentsline {section}{\numberline {1}Bevezetés}{13}{section.1}%
+\select@language {hungarian} \contentsline {section}{\numberline {2}Mély tanulás és interpretálhatóság}{14}{section.2}%
+\select@language {hungarian} \contentsline {subsection}{\numberline {2.1}Magyarázhatóság}{14}{subsection.2.1}%
+\select@language {hungarian} \contentsline {section}{\numberline {3}YOLOv8: Szemantikus szegmentációs háló és működése}{15}{section.3}%
+\select@language {hungarian} \contentsline {subsection}{\numberline {3.1}Yolov8 architektúra}{15}{subsection.3.1}%
+\select@language {hungarian} \contentsline {subsection}{\numberline {3.2}Szemantikus szegmentáció}{17}{subsection.3.2}%
+\select@language {hungarian} \contentsline {subsection}{\numberline {3.3}Adathalmazok és kísérletek}{18}{subsection.3.3}%
+\select@language {hungarian} \contentsline {subsection}{\numberline {3.4}MLOps}{18}{subsection.3.4}%
+\select@language {hungarian} \contentsline {section}{\numberline {4}EigenCAM: Modellfüggőn magyarázó}{20}{section.4}%
+\select@language {hungarian} \contentsline {subsection}{\numberline {4.1}Aktivációk}{20}{subsection.4.1}%
+\select@language {hungarian} \contentsline {section}{\numberline {5}Az EigenCAM alkalmazása a YOLOv8-ra}{21}{section.5}%
+\select@language {hungarian} \contentsline {subsection}{\numberline {5.1}Implementáció lépései}{22}{subsection.5.1}%
+\select@language {hungarian} \contentsline {section}{\numberline {6}Magyarázhatósági eredmények és értékelés}{23}{section.6}%
+\select@language {hungarian} \contentsline {subsection}{\numberline {6.1}Magyarázat}{24}{subsection.6.1}%
+\select@language {hungarian} \contentsline {section}{\numberline {7}Az EigenCAM alkalmazásának gyakorlati haszna}{25}{section.7}%
+\select@language {hungarian} \contentsline {subsection}{\numberline {7.1}Eredmények összegzése}{25}{subsection.7.1}%
+\select@language {hungarian} \contentsline {section}{\numberline {8}Jövőbeli irányok és kutatási lehetőségek}{26}{section.8}%
+\select@language {hungarian} \contentsline {section}{\numberline {9}Szó- és rövidítés jegyzék}{28}{section.9}%
+\select@language {hungarian} \contentsline {subsection}{\numberline {9.1}Rövidítésjegyzék}{29}{subsection.9.1}%
