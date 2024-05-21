@@ -232,15 +232,15 @@
 	majd a kimeneti rétegekben meghatározza az objektumok pozícióját és osztályát, mindezt egy iteráció alatt,
 	innen is jön a \("\)\gls{Yolo}\("\) elnevezés.
 	A YOLOv8 architektúra~\ref{fig:Yolov8} általában három részre osztható:
+	\newpage
 	\begin{enumerate}
 		\item Az előfeldolgozó rétegek, amelyek a bemeneti képet előkészítik a további feldolgozásra.
 		\item A konvolúciós rétegek, amelyek a képet feldolgozzák és az objektumokat azonosítják.
 		\item A kimeneti rétegek, amelyek meghatározzák az objektumok pozícióját és osztályát.
 	\end{enumerate}
-	\newpage
 	\begin{figure}[ht] %PAINT IT
 		\centering
-		\noindent\includegraphics[width=1\linewidth]{maxresdefault}
+		\noindent\includegraphics[width=0.75\linewidth]{maxresdefault}
 		\label{fig:Yolov8}
 	\end{figure}
 	A YOLOv8 architektúra eltérő méretű és kapacitású változatokban érhető el, amelyek különböző feladatokhoz
@@ -371,8 +371,16 @@
 	\newsection{A háló tanításának eredményei}\label{sec:haloperformancia}
 	
 	%% IDE ÍRJ MÉG
+    
+   A Yolov8\_seg hálózat újra betanítása során a Comet ML platformot(\ref{subsec:MLOps}) használtuk, amely lehetővé tette számunkra a tanítási folyamat részletes nyomon követését és optimalizálását. A hálózatot közlekedési objektumok, mint például autók, gyalogosok és kerékpárok szegmentálására használtuk. Az adatok előkészítése és előfeldolgozása után a modellt iteratívan finomítottuk a Comet ML segítségével, amely lehetővé tette a hyperparaméterek folyamatos monitorozását és módosítását. A tanítási folyamat során a modell teljesítményét folyamatosan értékeltük, és a hyperparamétereket szükség szerint módosítottuk a legjobb eredmények elérése érdekében. Az alábbi confusion mátrix a modell végső teljesítményét mutatja be, amely jól illusztrálja az egyes osztályok pontos szegmentálását és az esetleges tévesztéseket. A confusion mátrix (\aref{fig:confusionmatrix}. Ábra)segítségével könnyen látható, hogy a modell milyen jól teljesít az egyes osztályok szegmentálásában, és hol vannak a leggyakoribb tévesztések.
+   \begin{figure}[ht]
+   \centering
+   \includegraphics[width=1\linewidth]{confusionmatrix}
+   \caption{Confusion mátrix (bal oldali, valós kategóriára normált százalékos találati arány, jobb oldali a valós és prediktált osztályozások száma)}
+   \label{fig:confusionmatrix}
+   \end{figure}
 	
-	
+	\subsection{title}
 	
 	
 	\newsection{EigenCAM: Modellfüggő magyarázó módszer}\label{sec:eigencam:-modellfuggo-magyarazo}
