@@ -2,7 +2,8 @@
 __pycache__/
 *.py[cod]
 *$py.class
-
+*.dbj
+*\303*
 # C extensions
 *.so
 
@@ -23,6 +24,11 @@ wheels/
 share/python-wheels/
 Yolov8-EigenCAM-experiment/idea/
 Yolov8-EigenCAM-experiment/data/
+Yolov8-EigenCAM-experiment/output/
+Yolov8-EigenCAM-experiment/runs/
+.idea/
+ Yolov8-EigenCAM-experiment/.idea/
+Yolov8-EigenCAM-experiment/Doc/auxil
 *.egg-info/
 data/
 output/
