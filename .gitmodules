@@ -1,0 +1,3 @@
+[submodule "Yolov8_XAI_experiment"]
+	path = Yolov8_XAI_experiment
+	url = https://github.com/SzittyaPetro/Yolov8_XAI_experiment.git
