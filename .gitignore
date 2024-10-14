@@ -6,7 +6,7 @@ __pycache__/
 *\303*
 # C extensions
 *.so
-
+*Yolov8_XAI_experiment_drive*
 # Distribution / packaging
 .Python
 build/
